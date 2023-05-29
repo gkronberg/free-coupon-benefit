@@ -1,23 +1,49 @@
 package com.mercadolibre.freecouponbenefit.repository
 
 import com.mercadolibre.freecouponbenefit.dto.ItemStatsResponse
+import com.mercadolibre.freecouponbenefit.exception.ItemsStatsUpdateException
+import com.mercadolibre.freecouponbenefit.utils.ApiError
+import com.mercadolibre.freecouponbenefit.utils.ExceptionUtils
+import com.mercadolibre.freecouponbenefit.utils.getMessage
+import com.mercadolibre.freecouponbenefit.utils.truncatedStackTrace
 import java.sql.ResultSet
+import org.slf4j.LoggerFactory
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.http.ResponseEntity
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
 class ItemStatsRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) {
 
-    fun getTop5ItemStatsResponse(timeToExpire: String, states: List<Int>): List<ItemStatsResponse> {
-//        val sql = queryForTop5()
+    private val logger = LoggerFactory.getLogger(javaClass)
+
+    fun updateItemStats(itemId: String) {
+        val query = queryForUpsert()
+        val params = mapOf(
+            "item_id" to itemId
+        )
+
+        try {
+            jdbcTemplate.update(query, params)
+        } catch (e: Exception) {
+            val errorMsg = e.getMessage()
+
+            logger.error("Unexpected error in ItemStatsRepository.updateItemStats, details='$errorMsg'" + e.truncatedStackTrace())
+
+            throw ItemsStatsUpdateException(errorMsg, e)
+        }
+    }
+
+    fun getTop5ItemStatsResponse(states: List<Int>): List<ItemStatsResponse> {
+//        val query = queryForTop5()
 //        val params = mapOf(
 //            "state_id" to states,
 //            "time_to_expire" to timeToExpire
 //        )
 
         return try {
-//            jdbcTemplate.query(sql, params) { rs, _ -> mapItemStats(rs) }
+//            jdbcTemplate.query(query, params) { rs, _ -> mapItemStats(rs) }
             listOf(
                 ItemStatsResponse("MLA34", 145000),
                 ItemStatsResponse("MLA4375", 78705),
@@ -36,6 +62,15 @@ class ItemStatsRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) 
 //            cant = rs.getLong("cant")
 //        )
 //    }
+
+    private fun queryForUpsert(): String {
+        return """
+            INSERT INTO coupon_stats
+            VALUES (:item_id, 1)
+            ON CONFLICT(item_id) DO UPDATE 
+                SET item_id = :item_id, cant = (SELECT cant FROM coupon_stats WHERE item_id = :item_id) + 1
+        """.trimIndent()
+    }
 
     private fun queryForTop5(): String {
         return """

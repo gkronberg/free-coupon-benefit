@@ -21,7 +21,11 @@ class CouponService(
     fun getCouponsToBuy(request: CouponBenefitRequest, requestHttp: HttpServletRequest): CouponBenefitResponse {
 
         try {
-            val response = CouponBenefitResponse(arrayListOf("MLA1", "MLA2", "MLA4", "MLA5"), BigDecimal(480))
+            val response = calculateCouponsToBuy(request)
+
+            response.itemIds.forEach { itemId ->
+                repository.updateItemStats(itemId)
+            }
 
             return response
 //        } catch (e: ResponseStatusException) {
@@ -34,5 +38,11 @@ class CouponService(
             logger.error("DLOCAL REQUEST updatePIXPayment: ERROR while processing request= ${request.toJson()} msg= $msg")
             throw BadRequestException(msg)
         }
+    }
+
+    private fun calculateCouponsToBuy(request: CouponBenefitRequest): CouponBenefitResponse {
+//        return CouponBenefitResponse(request.itemIds, BigDecimal(480))
+        logger.info(request.toJson())
+        return CouponBenefitResponse(arrayListOf("MLA1", "MLA2", "MLA4", "MLA5"), BigDecimal(480))
     }
 }
