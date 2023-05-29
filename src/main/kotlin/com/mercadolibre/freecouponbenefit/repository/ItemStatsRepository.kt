@@ -65,10 +65,10 @@ class ItemStatsRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) 
 
     private fun queryForUpsert(): String {
         return """
-            INSERT INTO coupon_stats
+            INSERT INTO coupon_stats AS cs
             VALUES (:item_id, 1)
             ON CONFLICT(item_id) DO UPDATE 
-                SET item_id = :item_id, cant = (SELECT cant FROM coupon_stats WHERE item_id = :item_id) + 1
+                SET item_id = :item_id, cant = cs.cant + 1
         """.trimIndent()
     }
 
