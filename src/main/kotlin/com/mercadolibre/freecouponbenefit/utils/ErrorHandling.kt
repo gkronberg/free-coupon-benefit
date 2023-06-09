@@ -1,5 +1,7 @@
 package com.mercadolibre.freecouponbenefit.utils
 
+import com.mercadolibre.freecouponbenefit.exception.BadRequestException
+import com.mercadolibre.freecouponbenefit.exception.NotFoundException
 import javax.servlet.http.HttpServletRequest
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DuplicateKeyException
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+
+private const val STACKTRACE_LINES = 10
 
 /**
  * Support for error handling in spring boot rest controllers.
@@ -28,7 +32,7 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any>? {
         val errorMsg = ex.getMessage()
 
-        logger.error("A HttpRequestMethodNotSupportedException occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A HttpRequestMethodNotSupportedException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }
@@ -41,7 +45,27 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any> {
         val errorMsg = ex.getMessage()
 
-        logger.error("A HttpMessageNotReadableException occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A HttpMessageNotReadableException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
+
+        return ResponseEntity(ApiError(status, errorMsg), status)
+    }
+
+    @ExceptionHandler(BadRequestException::class)
+    fun handleBadRequestException(request: HttpServletRequest, ex: BadRequestException): ResponseEntity<ApiError> {
+        val errorMsg = ex.getMessage()
+        val status = HttpStatus.BAD_REQUEST
+
+        logger.error("A BadRequestException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
+
+        return ResponseEntity(ApiError(status, errorMsg), status)
+    }
+
+    @ExceptionHandler(NotFoundException::class)
+    fun handleUnsupportedOperationException(request: HttpServletRequest, ex: NotFoundException): ResponseEntity<ApiError> {
+        val errorMsg = ex.getMessage()
+        val status = HttpStatus.NOT_FOUND
+
+        logger.error("A NotFoundException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }
@@ -51,7 +75,7 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
         val errorMsg = ex.getMessage()
         val status = HttpStatus.BAD_REQUEST
 
-        logger.error("A DuplicateKeyException occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A DuplicateKeyException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }
@@ -61,7 +85,7 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
         val errorMsg = ex.getMessage()
         val status = HttpStatus.INTERNAL_SERVER_ERROR
 
-        logger.error("A DataAccessException occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A DataAccessException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }
@@ -71,7 +95,7 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
         val errorMsg = ex.getMessage()
         val status = HttpStatus.NOT_IMPLEMENTED
 
-        logger.error("A UnsupportedOperationException occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A UnsupportedOperationException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }
@@ -81,7 +105,7 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
         val errorMsg = ex.getMessage()
         val status = HttpStatus.BAD_REQUEST
 
-        logger.error("A MethodArgumentTypeMismatchException occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A MethodArgumentTypeMismatchException occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }
@@ -91,7 +115,7 @@ class ErrorControllerAdvice : ResponseEntityExceptionHandler() {
         val errorMsg = ex.getMessage()
         val status = HttpStatus.INTERNAL_SERVER_ERROR
 
-        logger.error("A Exception occurred, details='$errorMsg'" + ex.truncatedStackTrace())
+        logger.error("A Exception occurred, details='$errorMsg'" + ex.truncatedStackTrace(STACKTRACE_LINES))
 
         return ResponseEntity(ApiError(status, errorMsg), status)
     }

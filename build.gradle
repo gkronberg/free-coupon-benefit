@@ -88,10 +88,16 @@ dependencies {
 //    implementation("org.easybatch:easybatch-spring:5.2.0")
 //    implementation("com.stripe:stripe-java:20.24.0")
 
-    implementation("org.springframework.boot:spring-boot-starter-web-services")
-    implementation("org.springframework.ws:spring-ws-support")
-    implementation("org.springframework.ws:spring-ws-security")
+//    implementation("org.springframework.boot:spring-boot-starter-web-services")
+//    implementation("org.springframework.ws:spring-ws-support")
+//    implementation("org.springframework.ws:spring-ws-security")
     implementation("javax.activation:activation:1.1.1")
+
+    // Spring Cache (Caffeine implementation)
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine:2.6.2")
+
+    ktlint('com.pinterest:ktlint:0.36.0')
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.ws:spring-ws-test")
@@ -105,7 +111,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:2.0.0")
 
     // Docs
-    implementation("org.springdoc:springdoc-openapi-ui:1.4.6")
+//    implementation("org.springdoc:springdoc-openapi-ui:1.4.6")
 
     modules {
         // Support kotlin 1.1 dependencies

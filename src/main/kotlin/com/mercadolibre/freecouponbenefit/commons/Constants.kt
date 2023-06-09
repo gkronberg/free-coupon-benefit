@@ -13,6 +13,7 @@ object Constants {
     const val REQUEST_HEADERS_AUTHORIZATION = "Authorization"
 
     const val COUPON_PATH: String = "/coupon/"
+    const val COUPON_STATS_PATH: String = "/coupon/stats"
     const val PIX_REFUND_WEBHOOK_PATH_KEY: String = "\${dlocal.pix.refund.webhook.path}"
     const val PIX_CANCEL_PATH = "/dlocal/pix/cancel/{purchaseId}"
 }
