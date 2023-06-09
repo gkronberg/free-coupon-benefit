@@ -47,22 +47,15 @@ compileTestKotlin {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        def nexusHome = System.getenv('NEXUS_URL_REPOSITORY')
-        url = uri("${nexusHome}/repository/maven2-group/")
-        credentials {
-            username System.getenv("NEXUS_USERNAME_REPOSITORY")
-            password System.getenv("NEXUS_PASSWORD_REPOSITORY")
-        }
-    }
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.springfox:springfox-swagger2:2.9.2")
+    implementation("io.springfox:springfox-swagger-ui:2.9.2")
     implementation("org.aspectj:aspectjweaver:1.9.4")
 
     implementation ("org.apache.logging.log4j:log4j-api:${log4j2version}")
@@ -77,20 +70,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
-    implementation("com.mikesamuel:json-sanitizer:1.2.0")
-
     implementation("org.flywaydb:flyway-core:5.2.4")
     implementation("org.postgresql:postgresql")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
-//    implementation("org.easybatch:easybatch-core:5.2.0")
-//    implementation("org.easybatch:easybatch-opencsv:5.2.0")
-//    implementation("org.easybatch:easybatch-validation:5.2.0")
-//    implementation("org.easybatch:easybatch-spring:5.2.0")
-//    implementation("com.stripe:stripe-java:20.24.0")
-
-//    implementation("org.springframework.boot:spring-boot-starter-web-services")
-//    implementation("org.springframework.ws:spring-ws-support")
-//    implementation("org.springframework.ws:spring-ws-security")
     implementation("javax.activation:activation:1.1.1")
 
     // Spring Cache (Caffeine implementation)

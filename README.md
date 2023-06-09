@@ -1,10 +1,9 @@
 # FREE-COUPON-BENEFIT
 
-This service processes payment transactions and communication with external gateways.
-
 1. [Built With](#built-with)
 2. [How To Build](#how-to-build)
-3. [Management](#anagement)
+3. [Management](#management)
+4. [Swagger](#swagger)
 
 ## Built With
 - Spring Framework & Spring Boot - Web Framework
@@ -23,25 +22,23 @@ Later, to build without running tests:
 To run tests:
 ```
 docker-compose -f docker-compose-local.yml up -d
-./gradlew build
+./gradlew clean build --no-build-cache
 ```
 
 (docker compose takes care of creating all the dependencies needed to run tests)
 
-And to run Jacoco Test Reports:
-
-```
-./gradlew jacocoTestReport
-```
-Reports will be saved on ${project_home}/build/jacocoHtml/index.html
 
 
 For turning down the Docker env:
 ```
-docker-compose down
+docker-compose -f docker-compose-local.yml down
 ```
 
 ## Management
-* http://localhost:9090/free-coupon-benefit/health
-* http://localhost:9090/free-coupon-benefit/metrics
-* http://localhost:9090/free-coupon-benefit/actuator/info
+* http://localhost:9091/free-coupon-benefit/actuator
+* http://localhost:9091/free-coupon-benefit/actuator/health
+* http://localhost:9091/free-coupon-benefit/actuator/metrics
+
+## Swagger
+* http://localhost:9091/swagger-ui.html
+* http://localhost:9091/free-coupon-benefit/api-docs
