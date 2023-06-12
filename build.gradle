@@ -92,9 +92,6 @@ dependencies {
     testImplementation("com.squareup.okhttp3:okhttp:4.2.2")
     testImplementation("com.ninja-squad:springmockk:2.0.0")
 
-    // Docs
-//    implementation("org.springdoc:springdoc-openapi-ui:1.4.6")
-
     modules {
         // Support kotlin 1.1 dependencies
         module("org.jetbrains.kotlin:kotlin-stdlib-jre8") {
@@ -118,10 +115,6 @@ tasks.register("ktformat", JavaExec) {
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
     args = ["-F", "src/main/**/*.kt"]
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlin.Experimental"]
 }
 
 test {

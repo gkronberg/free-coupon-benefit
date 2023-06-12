@@ -57,7 +57,7 @@ class CouponService(
         itemIdsSet.forEach { itemId ->
             val itemInfo = itemsClient.getItemInfo(itemId)
 
-            // Se excluyen los items de los cuales no se pudo obtener info desde el ws de clientes.
+            // Se excluyen los items de los cuales no se pudo obtener info desde el ws de clientes, o el precio es nulo.
             if (itemInfo?.price != null) {
                 items.add(Pair(itemId, itemInfo.price))
             }
@@ -71,10 +71,6 @@ class CouponService(
     private fun getBestItemsToBuy(items: List<Pair<String, BigDecimal>>, amount: BigDecimal): Pair<List<String>, BigDecimal> {
         val itemList = arrayListOf<String>()
         var total = BigDecimal.ZERO
-
-//        val items = mapPrices.entries.map {
-//            Pair(it.key, it.value)
-//        }
 
         val bestCombination = findBestCombinationOrNull(items, amount)
         bestCombination?.let {
@@ -136,7 +132,6 @@ class CouponService(
         // caso base: el tamaño de la combinación es `k`
         if (k == 0) {
             subarrays.add(ArrayList(out))
-//            numerodecombinaciones++
             return
         }
 
@@ -144,7 +139,7 @@ class CouponService(
         for (j in i until items.size) {
             out.add(items[j])
             findCombinations(items, j + 1, k - 1, subarrays, out)
-            out.removeAt(out.size - 1) // retractarse
+            out.removeAt(out.size - 1)
         }
     }
 }

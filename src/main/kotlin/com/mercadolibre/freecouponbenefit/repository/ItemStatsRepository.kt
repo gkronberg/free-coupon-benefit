@@ -40,13 +40,6 @@ class ItemStatsRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) 
 
         return try {
             jdbcTemplate.query(query) { rs, _ -> mapItemStats(rs) }
-//            listOf(
-//                ItemStatsResponse("MLA34", 145000),
-//                ItemStatsResponse("MLA4375", 78705),
-//                ItemStatsResponse("MLA6", 13938),
-//                ItemStatsResponse("MLA488578", 12503),
-//                ItemStatsResponse("MLA247", 9822)
-//            )
         } catch (e: EmptyResultDataAccessException) {
             emptyList()
         }

@@ -2,8 +2,9 @@
 
 1. [Built With](#built-with)
 2. [How To Build](#how-to-build)
-3. [Management](#management)
-4. [Swagger](#swagger)
+3. [How To Run](#how-to-run)
+4. [Management](#management)
+5. [Swagger](#swagger)
 
 ## Built With
 - Spring Framework & Spring Boot - Web Framework
@@ -27,11 +28,15 @@ docker-compose -f docker-compose-local.yml up -d
 
 (docker compose takes care of creating all the dependencies needed to run tests)
 
-
-
 For turning down the Docker env:
 ```
 docker-compose -f docker-compose-local.yml down
+```
+
+## How To Run
+
+```
+java -jar ./build/libs/free-coupon-benefit-0.0.1-SNAPSHOT.jar
 ```
 
 ## Management
