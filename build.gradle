@@ -1,0 +1,148 @@
+plugins {
+    id "org.springframework.boot" version "2.2.2.RELEASE"
+    id "org.jetbrains.kotlin.jvm" version "1.3.61"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.61"
+    id "org.jetbrains.kotlin.plugin.noarg" version "1.3.61"
+    id 'com.github.ben-manes.versions' version '0.38.0'
+}
+
+apply plugin: "kotlin"
+apply plugin: "kotlin-spring"
+apply plugin: "kotlin-jpa"
+apply plugin: "eclipse"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+apply plugin: 'jacoco'
+apply plugin: 'com.github.ben-manes.versions'
+
+group = "com.mercadolibre"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = 1.8
+
+configurations { ktlint }
+
+ext {  log4j2version = "2.17.0"}
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        csv.enabled = false
+        html.destination = file("${buildDir}/jacocoHtml")
+    }
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.allWarningsAsErrors = true
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.springfox:springfox-swagger2:2.9.2")
+    implementation("io.springfox:springfox-swagger-ui:2.9.2")
+    implementation("org.aspectj:aspectjweaver:1.9.4")
+
+    implementation ("org.apache.logging.log4j:log4j-api:${log4j2version}")
+    implementation ("org.apache.logging.log4j:log4j-core:${log4j2version}")
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.google.guava:guava:28.1-jre")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // Jackson Dependencies
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+
+    implementation("org.flywaydb:flyway-core:5.2.4")
+    implementation("org.postgresql:postgresql")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("javax.activation:activation:1.1.1")
+
+    // Spring Cache (Caffeine implementation)
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine:2.6.2")
+
+    ktlint('com.pinterest:ktlint:0.36.0')
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.ws:spring-ws-test")
+    testImplementation("io.rest-assured:rest-assured:3.3.0")
+    testImplementation("io.rest-assured:spring-mock-mvc:3.3.0")
+    testImplementation("io.github.benas:random-beans:3.7.0")
+    testImplementation("com.nhaarman:mockito-kotlin:1.6.0")
+    testImplementation("org.mock-server:mockserver-netty:5.7.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.2.2")
+    testImplementation("com.squareup.okhttp3:okhttp:4.2.2")
+    testImplementation("com.ninja-squad:springmockk:2.0.0")
+
+    modules {
+        // Support kotlin 1.1 dependencies
+        module("org.jetbrains.kotlin:kotlin-stdlib-jre8") {
+            replacedBy("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        }
+    }
+}
+
+tasks.register("ktlint", JavaExec) {
+    group = "verification"
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args = ["src/main/**/*.kt"]
+}
+check.dependsOn ktlint
+
+tasks.register("ktformat", JavaExec) {
+    group = "formatting"
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args = ["-F", "src/main/**/*.kt"]
+}
+
+test {
+    useJUnitPlatform()
+
+    minHeapSize = "512M"
+    maxHeapSize = "4G"
+
+    failFast = false
+
+    reports.junitXml.destination = file("$buildDir/test-results")
+    systemProperty "spring.profiles.active", "test"
+
+    testLogging {
+        events "failed", "standardError"
+        exceptionFormat "full"
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} " +
+                    "(${result.testCount} tests, " +
+                    "${result.successfulTestCount} successes, " +
+                    "${result.failedTestCount} failures, " +
+                    "${result.skippedTestCount} skipped)")
+    }
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+}

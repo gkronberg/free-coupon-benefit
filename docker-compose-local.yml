@@ -1,0 +1,11 @@
+version: '3'
+services:
+  postgres:
+    restart: always
+    image: "postgres:12.11-alpine"
+    environment:
+      POSTGRES_DB: free-coupon-benefit
+      POSTGRES_USER: meli1234
+      POSTGRES_PASSWORD: passMeli4321
+    ports:
+      - "5432:5432"
